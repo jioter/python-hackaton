@@ -15,7 +15,7 @@
             {% endfor %}
         </div>
     {% endif %}
-    {% if form.id %}
+    {% if form.id.value %}
         <form method="POST">
             {{ form.csrf_token }}
             <input name="_method" type="hidden" value="DELETE">
