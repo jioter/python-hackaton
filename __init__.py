@@ -2,9 +2,9 @@ from datetime import timedelta
 
 # from auth import auth
 # from game import game
-from test import test
-from app import app
-from db import db
+from .test import test
+from .app import app
+from .db import db
 
 
 def run_app():
