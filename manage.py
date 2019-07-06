@@ -3,8 +3,7 @@ from flask_migrate import Migrate, MigrateCommand
 
 from app import app
 from db import db
-
-from models import User
+from models import User, Game, GameResult
 
 migrate = Migrate(app, db)
 manager = Manager(app)
