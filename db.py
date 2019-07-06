@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from app import app
+from .app import app
 
 POSTGRES_URL = 'dumbo.db.elephantsql.com:5432'
 POSTGRES_DB = 'vziectjf'
