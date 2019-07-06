@@ -6,6 +6,12 @@ from db import db
 game = Blueprint("game", __name__, template_folder='templates')
 
 
+@game.route("/", methods=["GET"])
+def games():
+    content = Game.query.order_by(Game.status).all()
+    return render_template('games.html', content=content)
+
+
 @game.route("/game", methods=["GET", "POST"])
 @game.route("/game/<int:game_id>", methods=["GET", "POST", "DELETE"])
 def game_page(game_id=None):

@@ -3,9 +3,9 @@ from flask_wtf.csrf import CSRFProtect
 
 # from auth import auth
 from game import game
-from test import test
 from app import app
 from db import db
+from games.blueprint_games import games_b
 
 
 def run_app():
@@ -13,8 +13,9 @@ def run_app():
     app.permanent_session_lifetime = timedelta(
         minutes=20)  # add session expire time
 
-    app.register_blueprint(test)
+    # app.register_blueprint(test)
     # app.register_blueprint(auth)
+    app.register_blueprint(games_b)
     app.register_blueprint(game)
 
     CSRFProtect().init_app(app)
