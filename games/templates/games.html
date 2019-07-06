@@ -1,0 +1,26 @@
+
+{% extends "layout.html" %}
+{% block title %} Games {% endblock %}
+{% block head %}
+
+{% endblock %}
+<br>
+{% block content %}
+    <div style="padding-top: 70px">
+        <a href="/#"> <button type="button" class="btn btn-primary btn-lg" style="padding-top: 10px">Add a new game</button></a>
+    </div>
+    <br>
+    <h1 class="Top" style="padding-top: 56px"> List of the games</h1>
+    <br>
+
+            <div class="card" style="width: 25rem; background-color: #30799B">
+            <ul class="list-group list-group-flush">
+                {% for game in  content%}
+                <li class="list-group-item" style="color: white; background-color: #11557C">
+                    <a href="games/{{ game.id }}" style="color: white">Game ID: {{ game.id }}, created by {{ game.user.login }}</a></li>
+                {% endfor %}
+            </ul>
+            </div>
+
+
+{% endblock %}

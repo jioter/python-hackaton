@@ -1,6 +1,7 @@
 from flask import Flask, render_template, Blueprint
 from functools import wraps
 from flask import g, request, redirect, url_for
+from models import Game, User
 
 games_b = Blueprint('games', __name__, template_folder='templates')
 
@@ -13,20 +14,16 @@ games_b = Blueprint('games', __name__, template_folder='templates')
 #     return decorated_function
 
 
-content = {'game_1': 'user1',
-           'game_2': 'user2',
-           'game_3': 'user3',
-           'game_4': 'user4',
-           'game_5': 'user5'}
 
 @games_b.route('/games')
 # @login_required
 def games():
+    content = Game.query.order_by(Game.status).all()
     return render_template('games.html', content=content)
 
 @games_b.route('/games/<game_id>')
 def game(game_id):
-    return render_template('game.html', game=content.get(game_id))
+    return render_template('game.html',  )
 
 
 

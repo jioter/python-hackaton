@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template
 
-from db import db
 from models import User
 
 test = Blueprint('test', __name__, template_folder='templates')
