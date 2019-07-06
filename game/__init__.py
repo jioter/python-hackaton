@@ -22,6 +22,10 @@ def game_page(game_id=None):
         form.from_number.value = game.from_number
         form.to_number.value = game.to_number
         form.attempts.value = game.attempts
+    else:
+        form.from_number.value = Game.DEFAULT_FROM_NUMBER
+        form.to_number.value = Game.DEFAULT_TO_NUMBER
+        form.attempts.value = Game.DEFAULT_ATTEMPTS
 
     errors = None
     if form.is_submitted() and not form.validate():
@@ -44,9 +48,9 @@ def game_page(game_id=None):
 
 
 def update_game(game_id):
-    from_number = request.form.get('from_number') or 0
-    to_number = request.form.get('to_number') or 10
-    attempts = request.form.get('attempts') or 3
+    from_number = request.form.get('from_number') or Game.DEFAULT_FROM_NUMBER
+    to_number = request.form.get('to_number') or Game.DEFAULT_TO_NUMBER
+    attempts = request.form.get('attempts') or Game.DEFAULT_ATTEMPTS
 
     game = Game.query.get(int(game_id))
     game.number = request.form['number']
@@ -58,9 +62,9 @@ def update_game(game_id):
 
 
 def create_game():
-    from_number = request.form.get('from_number') or 0
-    to_number = request.form.get('to_number') or 10
-    attempts = request.form.get('attempts') or 3
+    from_number = request.form.get('from_number') or Game.DEFAULT_FROM_NUMBER
+    to_number = request.form.get('to_number') or Game.DEFAULT_TO_NUMBER
+    attempts = request.form.get('attempts') or Game.DEFAULT_ATTEMPTS
 
     new_game = Game(
         number=request.form['number'],

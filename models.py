@@ -31,6 +31,10 @@ class Game(db.Model):
     STATUS_PROGRESS = 1
     STATUS_INACTIVE = 2
 
+    DEFAULT_FROM_NUMBER = 0
+    DEFAULT_TO_NUMBER = 10
+    DEFAULT_ATTEMPTS = 3
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = relationship('User', backref=backref('games', uselist=False))
