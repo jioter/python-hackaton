@@ -1,29 +1,31 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint
-from flask_restful import Resource
 from app import bcrypt
-from .forms import (LoginForm, RegistrationForm, UpdateAccountForm,
-                             RequestResetForm, ResetPasswordForm)
+from .forms import (LoginForm, RegistrationForm)
 from app.models import User
 from flask_login import login_user, current_user, logout_user, login_required
 # from flaskblog.users.utils import save_picture, save_post_picture, send_reset_email
+#
+# from flask_restful import Resource
+# from flask import session
+# from auth.parsers import auth_parser
 
 users = Blueprint('users', __name__)
 
+# without API
 
-# @users.route("/register", methods=['GET', 'POST'])
-class Register(Resource):
-    def register():
-        if current_user.is_authenticated:
-            return redirect(url_for('main.home'))
-        form = RegistrationForm()
-        if form.validate_on_submit():
-            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            user = User(username=form.username.data, email=form.email.data, password=hashed_password)
-            db.session.add(user)
-            db.session.commit()
-            flash("Your acc created! You can login", 'success')
-            return redirect(url_for('users.login'))
-        return render_template('00_register.html', title="Login-admin", form=form)
+@users.route("/signup", methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash("Your acc created! You can login", 'success')
+        return redirect(url_for('users.login'))
+    return render_template('00_register.html', title="Login-admin", form=form)
 
 
 @users.route("/login", methods=['GET', 'POST'])
@@ -43,7 +45,6 @@ def login():
         else:
             flash("Login Unsuccessful. Please, go home and die!", 'danger')
     return render_template('00_login.html', title="Login-admin", form=form)
-    # return render_template('00_admin.html', posts = posts)
 
 
 @users.route("/logout")
@@ -60,7 +61,6 @@ def account():
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
 
-
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
@@ -73,40 +73,85 @@ def account():
     return render_template('00_account.html', title="Account", image_file=image_file, form=form)
 
 
-@users.route("/user/<string:username>")
-def user_post(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    page = request.args.get('page', 1, type=int)
-    posts = News.query.filter_by(author=user).order_by(News.pub_date.desc()).paginate(page=page, per_page=4)
-    return render_template('user_posts.html', posts=posts, user=user)
+# @users.route("/user/<string:username>")
+# def user_post(username):
+#     user = User.query.filter_by(username=username).first_or_404()
+#     page = request.args.get('page', 1, type=int)
+#     posts = News.query.filter_by(author=user).order_by(News.pub_date.desc()).paginate(page=page, per_page=4)
+#     return render_template('user_posts.html', posts=posts, user=user)
 
 
-@users.route("/reset_password", methods=['GET', 'POST'])
-def reset_request():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    form = RequestResetForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        send_reset_email(user)
-        flash('An email has been sent with instraction', 'info')
-        return redirect(url_for('users.login'))
-    return render_template('reset_request.html', title='Reset Password', form=form)
+# @users.route("/reset_password", methods=['GET', 'POST'])
+# def reset_request():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('main.home'))
+#     form = RequestResetForm()
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(email=form.email.data).first()
+#         send_reset_email(user)
+#         flash('An email has been sent with instraction', 'info')
+#         return redirect(url_for('users.login'))
+#     return render_template('reset_request.html', title='Reset Password', form=form)
+#
+#
+# @users.route("/reset_password/<token>", methods=['GET', 'POST'])
+# def reset_token(token):
+#     if current_user.is_authenticated:
+#         return redirect(url_for('main.home'))
+#     user = User.verify_reset_token(token)
+#     if user is None:
+#         flash("That is an invalid token", 'warning')
+#         return redirect(url_for('users.reset_request'))
+#     form = RequestResetForm()
+#     if form.validate_on_submit():
+#         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+#         user.password = hashed_password
+#         db.session.commit()
+#         flash("Your pass has been updated! You can login", 'success')
+#         return redirect(url_for('users.login'))
+#     return render_template('00_register.html', title="Login-admin", form=form)
 
 
-@users.route("/reset_password/<token>", methods=['GET', 'POST'])
-def reset_token(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    user = User.verify_reset_token(token)
-    if user is None:
-        flash("That is an invalid token", 'warning')
-        return redirect(url_for('users.reset_request'))
-    form = RequestResetForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user.password = hashed_password
-        db.session.commit()
-        flash("Your pass has been updated! You can login", 'success')
-        return redirect(url_for('users.login'))
-    return render_template('00_register.html', title="Login-admin", form=form)
+# # Using API
+#
+# class Login(Resource):
+#     def post(self):
+#         """
+#         Add to session new value logged_in = True and return success msg
+#         if user registered and put correct login and password
+#         :return: str
+#         """
+#         args = auth_parser.parse_args(strict=True)
+#         name = args.get("login")
+#         password = args.get("password")
+#         if not user:
+#             return "There is no users in our system, please register", 401
+#
+#         if name == user.get("login") and password == user.get("password"):
+#             session["logged_in"] = True
+#             return "You are successfully logged in"
+#         else:
+#             return "Wrong login or password", 403
+#
+#
+# class Logout(Resource):
+#     def get(self):
+#         """
+#         Change logged_in session value to False, which means that our decorator
+#         won't give access to see the page content from views where is it set.
+#         :return: str
+#         """
+#         session["logged_in"] = False
+#         return "You are successfully logged out"
+#
+#
+# class SignUp(Resource):
+#     def post(self):
+#         """
+#         Add new user to dict user if he put all arguments
+#         :return:
+#         """
+#         args = auth_parser.parse_args(strict=True)
+#         user["login"] = args.get("login")
+#         user["password"] = args.get("password")
+#         return "Successfully registered"
