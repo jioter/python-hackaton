@@ -5,7 +5,33 @@
 {% endblock %}
 <br>
 {% block content %}
-    <div>
-        <h1>Try to guess the number</h1>
-    </div>
+    <h1>Try to guess the number</h1>
+    <p>This number between
+        <span class="badge badge-primary">{{ game_results.game.from_number }}</span>
+        and
+        <span class="badge badge-primary">{{ game_results.game.to_number }}</span>.
+        You have
+        <span class="badge badge-info">{{ game_results.game.attempts - game_results.retries }}</span>
+        retries</p>
+
+    <form method="POST">
+        {{ form.csrf_token }}
+        <input name="_method" type="hidden" value="POST">
+        {# TODO user_id => current user id #}
+        <input name="user_id" type="hidden" value="1">
+        <div class="form-group">
+            <label for="number">Number</label>
+            <input id="number" name="number" type="number"
+                   class="form-control {{ 'is-invalid' if form.errors.number else '' }}"
+                   value="">
+            {% if form.errors.number %}
+                <div class="invalid-feedback">
+                    {{ ', '.join(form.errors.number) }}
+                </div>
+            {% endif %}
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Guess</button>
+        </div>
+    </form>
 {% endblock %}

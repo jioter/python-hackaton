@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %} Congratulations! {% endblock %}
+{% block head %}
+
+{% endblock %}
+<br>
+{% block content %}
+    <h1>Congratulations! You guessed.</h1>
+    <p>This number was
+        <span class="badge badge-success">{{ game_results.game.number }}</span>.
+        You guessed it in
+        <span class="badge badge-info">{{ game_results.retries }}</span>
+        attempts
+    </p>
+    <a class="btn btn-primary"
+           href="{{ url_for('game.games_page') }}">Select another game</a>
+{% endblock %}

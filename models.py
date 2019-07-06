@@ -37,7 +37,7 @@ class Game(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = relationship('User', backref=backref('games', uselist=False))
+    user = relationship('User', backref=backref('games', cascade="all,delete"))
     number = db.Column(db.Integer, nullable=False)
     from_number = db.Column(db.Integer, nullable=False)
     to_number = db.Column(db.Integer, nullable=False)
@@ -60,6 +60,12 @@ class Game(db.Model):
             status=Game.STATUS_ACTIVE
         ).order_by(func.random()).limit(1).first()
 
+    def is_inactive(self):
+        return self.status == self.STATUS_INACTIVE
+
+    def is_inprogress(self):
+        return self.status == self.STATUS_PROGRESS
+
 
 class GameResult(db.Model):
     __tablename__ = 'game_results'
@@ -70,9 +76,11 @@ class GameResult(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-    game = relationship('Game', backref=backref('game_results', uselist=False))
+    game = relationship('Game',
+                        backref=backref('game_results', cascade="all,delete"))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = relationship('User', backref=backref('game_results', uselist=False))
+    user = relationship('User',
+                        backref=backref('game_results', cascade="all,delete"))
     retries = db.Column(db.Integer, nullable=False)
     password = db.Column(db.String, nullable=True)
     status = db.Column(db.Integer, default=0)
@@ -84,3 +92,46 @@ class GameResult(db.Model):
         return f"game: {self.game.id}, user: {self.user.login}, " \
             f"retries: {self.retries}, status: {self.status}, " \
             f"date_start: {self.date_start}, date_finish: {self.date_finish}"
+
+    @classmethod
+    def create_result(cls, game_id, user_id):
+        game_result = cls(
+            game_id=game_id,
+            user_id=user_id,
+            retries=0
+        )
+
+        game = Game.query.get(game_id)
+        game.status = Game.STATUS_PROGRESS
+
+        db.session.add(game_result)
+        db.session.commit()
+
+        return game_result
+
+    @classmethod
+    def get_result(cls, game_id, user_id):
+        game_result = cls.query.filter_by(
+            game_id=game_id,
+            status=cls.STATUS_NEW
+        ).first()
+
+        if not game_result:
+            game_result = cls.create_result(game_id, user_id)
+
+        return game_result
+
+    def check_number(self, number):
+        number = int(number)
+        self.retries += 1
+
+        if self.game.number == number:
+            self.status = self.STATUS_TRUE
+            self.date_finish = datetime.datetime.utcnow()
+            self.game.status = Game.STATUS_INACTIVE
+        elif self.game.attempts == self.retries:
+            self.status = self.STATUS_FALSE
+            self.date_finish = datetime.datetime.utcnow()
+            self.game.status = Game.STATUS_ACTIVE
+
+        db.session.commit()

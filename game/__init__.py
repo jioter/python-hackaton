@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, abort, url_for
-from models import Game
+
+from game.game_play_form import GamePlayForm
+from models import Game, GameResult
 from game.game_form import GameForm
 from db import db
 
@@ -8,18 +10,39 @@ game = Blueprint("game", __name__, template_folder='templates')
 
 @game.route("/", methods=["GET"])
 def games_page():
-    content = Game.query.order_by(Game.status).all()
+    content = Game.query.order_by(
+        Game.status.asc(),
+        Game.date_created.desc()
+    ).all()
     return render_template('games.html', content=content)
 
 
 @game.route("/game/<int:game_id>", methods=["GET", "POST"])
 def game_page(game_id):
     game = Game.query.get(int(game_id))
+    # TODO - get real user_id
+    user_id = 1
 
-    if game.status != Game.STATUS_ACTIVE:
+    if not game or game.status == Game.STATUS_INACTIVE:
         return render_template('game_inactive.html', game=game)
 
-    return render_template('game.html', game=game)
+    form = GamePlayForm()
+    game_results = GameResult.get_result(game_id, user_id)
+
+    if game.status != Game.STATUS_ACTIVE and game_results.user_id != user_id:
+        return render_template('game_inactive.html', game=game)
+
+    if form.validate_on_submit():
+        number = request.form.get('number')
+        game_results.check_number(number)
+
+    if game_results.status == GameResult.STATUS_NEW:
+        return render_template('game.html', form=form,
+                               game_results=game_results)
+    elif game_results.status == GameResult.STATUS_TRUE:
+        return render_template('game_success.html', game_results=game_results)
+    elif game_results.status == GameResult.STATUS_FALSE:
+        return render_template('game_failed.html', game_results=game_results)
 
 
 @game.route("/game-form", methods=["GET", "POST"])
@@ -58,8 +81,9 @@ def game_form_page(game_id=None):
                 create_game()
                 return redirect(url_for("game.games_page"))
 
-
         elif request.method == "POST" and request.form['_method'] == "DELETE":
+
+            print(game_id)
             remove_game(game_id)
 
             return redirect(url_for("game.games_page"))
