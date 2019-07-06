@@ -15,6 +15,21 @@
             {% endfor %}
         </div>
     {% endif %}
+    {% if form.id %}
+        <form method="POST">
+            {{ form.csrf_token }}
+            <input name="_method" type="hidden" value="DELETE">
+            <input name="id" type="hidden" value="{{ form.id.value }}">
+            <input name="number" type="hidden" value="{{ form.number.value }}">
+            <input name="from_number" type="hidden"
+                   value="{{ form.from_number.value }}">
+            <input name="to_number" type="hidden" value="{{ form.to_number.value }}">
+            <input name="attempts" type="hidden" value="{{ form.attempts.value }}">
+
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    {% endif %}
+    <br>
 
     <form method="POST">
         {{ form.csrf_token }}
@@ -24,24 +39,24 @@
             <div class="form-group">
                 <label for="number">Number</label>
                 <input id="number" name="number" type="text"
-                       class="form-control">
+                       class="form-control" value="{{ form.number.value }}">
             </div>
             <div class="form-group">
                 <label for="from_number">From number</label>
                 <input id="from_number" name="from_number" type="text"
-                       class="form-control">
+                       class="form-control" value="{{ form.from_number.value }}">
             </div>
             <div class="form-group">
                 <label for="to_number">To number</label>
                 <input id="to_number" name="to_number" type="text"
-                       class="form-control">
+                       class="form-control" value="{{ form.to_number.value }}">
             </div>
             <div class="form-group">
                 <label for="attempts">Attempts</label>
                 <input id="attempts" name="attempts" type="text"
-                       class="form-control">
+                       class="form-control" value="{{ form.attempts.value }}">
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Create Game</button>
+        <button type="submit" class="btn btn-primary">Save Game</button>
     </form>
 {% endblock %}

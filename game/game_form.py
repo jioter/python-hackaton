@@ -8,3 +8,4 @@ class GameForm(FlaskForm):
     from_number = IntegerField('from_number')
     to_number = IntegerField('to_number')
     attempts = IntegerField('attempts')
+    id = IntegerField('id')

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, abort
 from models import Game
 from game.game_form import GameForm
 from db import db
@@ -6,26 +6,55 @@ from db import db
 game = Blueprint("game", __name__, template_folder='templates')
 
 
-@game.route("/game", methods=["GET", "POST", "DELETE"])
-def game_page():
+@game.route("/game", methods=["GET", "POST"])
+@game.route("/game/<int:game_id>", methods=["GET", "POST", "DELETE"])
+def game_page(game_id=None):
+    game = None
+    if game_id:
+        game = Game.query.get(int(game_id))
+        if not game:
+            abort(404)
+
     form = GameForm()
+    if game:
+        form.id.value = game.id
+        form.number.value = game.number
+        form.from_number.value = game.from_number
+        form.to_number.value = game.to_number
+        form.attempts.value = game.attempts
+
     errors = None
     if form.is_submitted() and not form.validate():
         errors = form.errors
 
-    if request.method == "POST" and request.form['_method'] == "POST":
-        result = create_game()
-        if result:
-            return redirect('/')
+    if not errors:
+        if request.method == "POST" and request.form['_method'] == "POST":
+            if game_id:
+                update_game(game_id)
+            else:
+                create_game()
 
-    elif request.method == "POST" and request.form['_method'] == "DELETE":
-        remove_game()
+            return redirect('/')
+        elif request.method == "POST" and request.form['_method'] == "DELETE":
+            remove_game(game_id)
+
+            return redirect('/')
 
     return render_template('form.html', form=form, errors=errors)
 
 
-def update_game():
-    pass
+def update_game(game_id):
+    from_number = request.form.get('from_number') or 0
+    to_number = request.form.get('to_number') or 10
+    attempts = request.form.get('attempts') or 3
+
+    game = Game.query.get(int(game_id))
+    game.number = request.form['number']
+    game.from_number = from_number
+    game.to_number = to_number
+    game.attempts = attempts
+
+    db.session.commit()
 
 
 def create_game():
@@ -45,8 +74,9 @@ def create_game():
     db.session.add(new_game)
     db.session.commit()
 
-    return new_game.id
 
+def remove_game(game_id):
+    game = Game.query.get(int(game_id))
 
-def remove_game():
-    pass
+    db.session.delete(game)
+    db.session.commit()
