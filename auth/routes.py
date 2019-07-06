@@ -1,15 +1,11 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from app import bcrypt
 from .forms import (LoginForm, RegistrationForm)
-from app.models import User
+from models import User
 from flask_login import login_user, current_user, logout_user, login_required
-# from flaskblog.users.utils import save_picture, save_post_picture, send_reset_email
-#
-# from flask_restful import Resource
-# from flask import session
-# from auth.parsers import auth_parser
+from . import users
 
-users = Blueprint('users', __name__)
+
 
 # without API
 
@@ -25,7 +21,7 @@ def register():
         db.session.commit()
         flash("Your acc created! You can login", 'success')
         return redirect(url_for('users.login'))
-    return render_template('00_register.html', title="Login-admin", form=form)
+    return render_template('template/00_register.html', title="Login-admin", form=form)
 
 
 @users.route("/login", methods=['GET', 'POST'])
@@ -44,7 +40,7 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('main.home'))
         else:
             flash("Login Unsuccessful. Please, go home and die!", 'danger')
-    return render_template('00_login.html', title="Login-admin", form=form)
+    return render_template('template/00_login.html', title="Login-admin", form=form)
 
 
 @users.route("/logout")
@@ -70,7 +66,7 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('00_account.html', title="Account", image_file=image_file, form=form)
+    return render_template('template/00_account.html', title="Account", image_file=image_file, form=form)
 
 
 # @users.route("/user/<string:username>")
