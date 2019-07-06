@@ -1,10 +1,10 @@
 from datetime import timedelta
 
-# from auth import auth
+from auth import auth
 # from game import game
-from .test import test
-from .app import app
-from .db import db
+from test import test
+from app import app
+from db import db
 
 
 def run_app():
@@ -13,6 +13,7 @@ def run_app():
         minutes=20)  # add session expire time
 
     app.register_blueprint(test)
+    app.register_blueprint(auth)
     # app.register_blueprint(auth)
     # app.register_blueprint(game)
 
