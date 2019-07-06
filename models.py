@@ -19,6 +19,10 @@ class User(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow,
                              server_default=func.now())
 
+    def __repr__(self):
+        return f"id: {self.id}, login: {self.login}, role: {self.role}, " \
+            f"date_created: {self.date_created}"
+
 
 class Game(db.Model):
     __tablename__ = 'games'
@@ -26,6 +30,10 @@ class Game(db.Model):
     STATUS_ACTIVE = 0
     STATUS_PROGRESS = 1
     STATUS_INACTIVE = 2
+
+    DEFAULT_FROM_NUMBER = 0
+    DEFAULT_TO_NUMBER = 10
+    DEFAULT_ATTEMPTS = 3
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -38,6 +46,19 @@ class Game(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow,
                              server_default=func.now())
     date_completed = db.Column(db.DateTime, default=None)
+
+    def __repr__(self):
+        return f"id: {self.id}, user: {self.user.login}, " \
+            f"number: {self.number}, from_number: {self.from_number}, " \
+            f"to_number: {self.to_number}, attempts: {self.attempts}, " \
+            f"status: {self.status}, date_created: {self.date_created}, " \
+            f"date_completed: {self.date_completed}"
+
+    @classmethod
+    def get_random_active_game(cls):
+        return cls.query.filter_by(
+            status=Game.STATUS_ACTIVE
+        ).order_by(func.random()).limit(1).first()
 
 
 class GameResult(db.Model):
@@ -58,3 +79,8 @@ class GameResult(db.Model):
     date_start = db.Column(db.DateTime, default=datetime.datetime.utcnow,
                            server_default=func.now())
     date_finish = db.Column(db.DateTime, default=None)
+
+    def __repr__(self):
+        return f"game: {self.game.id}, user: {self.user.login}, " \
+            f"retries: {self.retries}, status: {self.status}, " \
+            f"date_start: {self.date_start}, date_finish: {self.date_finish}"
