@@ -1,11 +1,8 @@
 from flask import Blueprint, render_template
 
-<<<<<<< HEAD
 from models import User
-=======
 from db import db
 from models import User, Game
->>>>>>> 7bee9ff3c9c5b97e42c24bfda9b1eb4309be9a4d
 
 test = Blueprint('test', __name__, template_folder='templates')
 
