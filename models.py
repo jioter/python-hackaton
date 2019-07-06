@@ -1,5 +1,6 @@
 import datetime
 
+from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
 
 from db import db
@@ -15,7 +16,8 @@ class User(db.Model):
     login = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, unique=False, nullable=False)
     role = db.Column(db.Integer, default=0)
-    date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow,
+                             server_default=func.now())
 
 
 class Game(db.Model):
@@ -33,7 +35,8 @@ class Game(db.Model):
     to_number = db.Column(db.Integer, nullable=False)
     attempts = db.Column(db.Integer, nullable=False)
     status = db.Column(db.Integer, default=0)
-    date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow,
+                             server_default=func.now())
     date_completed = db.Column(db.DateTime, default=None)
 
 
@@ -52,5 +55,6 @@ class GameResult(db.Model):
     retries = db.Column(db.Integer, nullable=False)
     password = db.Column(db.String, nullable=True)
     status = db.Column(db.Integer, default=0)
-    date_start = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    date_start = db.Column(db.DateTime, default=datetime.datetime.utcnow,
+                           server_default=func.now())
     date_finish = db.Column(db.DateTime, default=None)

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 54a58d228f1f
+Revision ID: 200514883c31
 Revises: 
-Create Date: 2019-07-06 15:13:44.215104
+Create Date: 2019-07-06 15:26:32.489759
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '54a58d228f1f'
+revision = '200514883c31'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('login', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('role', sa.Integer(), nullable=True),
-    sa.Column('date_created', sa.DateTime(), nullable=True),
+    sa.Column('date_created', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('login')
     )
@@ -35,7 +35,7 @@ def upgrade():
     sa.Column('to_number', sa.Integer(), nullable=False),
     sa.Column('attempts', sa.Integer(), nullable=False),
     sa.Column('status', sa.Integer(), nullable=True),
-    sa.Column('date_created', sa.DateTime(), nullable=True),
+    sa.Column('date_created', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
     sa.Column('date_completed', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -47,7 +47,7 @@ def upgrade():
     sa.Column('retries', sa.Integer(), nullable=False),
     sa.Column('password', sa.String(), nullable=True),
     sa.Column('status', sa.Integer(), nullable=True),
-    sa.Column('date_start', sa.DateTime(), nullable=True),
+    sa.Column('date_start', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
     sa.Column('date_finish', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['game_id'], ['games.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
