@@ -33,8 +33,8 @@ def game_page(game_id):
         return render_template('game_inactive.html', game=game)
 
     if form.validate_on_submit():
-        number = request.form.get('number')
-        game_results.check_number(number)
+        form.number.value = int(request.form.get('number'))
+        game_results.check_number(form.number.value)
 
     if game_results.status == GameResult.STATUS_NEW:
         return render_template('game.html', form=form,

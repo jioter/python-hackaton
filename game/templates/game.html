@@ -13,6 +13,14 @@
         You have
         <span class="badge badge-info">{{ game_results.game.attempts - game_results.retries }}</span>
         retries</p>
+    {% if form.number.value %}
+        <p>
+            You number is
+            <span class="text-info">
+            {{ "bigger" if form.number.value > game_results.game.number else "lower" }}
+            </span>
+        </p>
+    {% endif %}
 
     <form method="POST">
         {{ form.csrf_token }}
