@@ -1,7 +1,8 @@
 from datetime import timedelta
+from flask_wtf.csrf import CSRFProtect
 
 # from auth import auth
-# from game import game
+from game import game
 from test import test
 from app import app
 from db import db
@@ -14,7 +15,13 @@ def run_app():
 
     app.register_blueprint(test)
     # app.register_blueprint(auth)
-    # app.register_blueprint(game)
+    app.register_blueprint(game)
+
+    CSRFProtect().init_app(app)
+    app.config.update(dict(
+        SECRET_KEY="xFiewikvWEkyHeXQ3iY6",
+        WTF_CSRF_SECRET_KEY="yvggjVvE4yyMWHu2SsSKVCNwF0cXipuZaWWOqLLE"
+    ))
 
     return app
 
