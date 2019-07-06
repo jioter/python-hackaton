@@ -1,6 +1,5 @@
 from flask_restful import Resource
 from flask import session
-from auth.parsers import auth_parser
 
 user = dict()
 

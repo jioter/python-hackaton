@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_restful import Api
-from game.routes import Game
+from app.game.routes import Game
 
 game = Blueprint("game", __name__)
 api = Api(game)
