@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, abort
+from flask import Blueprint, render_template, request, redirect, abort, url_for
 from models import Game
 from game.game_form import GameForm
 from db import db
@@ -7,14 +7,24 @@ game = Blueprint("game", __name__, template_folder='templates')
 
 
 @game.route("/", methods=["GET"])
-def games():
+def games_page():
     content = Game.query.order_by(Game.status).all()
     return render_template('games.html', content=content)
 
 
-@game.route("/game", methods=["GET", "POST"])
-@game.route("/game/<int:game_id>", methods=["GET", "POST", "DELETE"])
-def game_page(game_id=None):
+@game.route("/game/<int:game_id>", methods=["GET", "POST"])
+def game_page(game_id):
+    game = Game.query.get(int(game_id))
+
+    if game.status != Game.STATUS_ACTIVE:
+        return render_template('game_inactive.html', game=game)
+
+    return render_template('game.html', game=game)
+
+
+@game.route("/game-form", methods=["GET", "POST"])
+@game.route("/game-form/<int:game_id>", methods=["GET", "POST", "DELETE"])
+def game_form_page(game_id=None):
     game = None
     if game_id:
         game = Game.query.get(int(game_id))
@@ -41,16 +51,20 @@ def game_page(game_id=None):
         if request.method == "POST" and request.form['_method'] == "POST":
             if game_id:
                 update_game(game_id)
+                return redirect(
+                    url_for("game.game_form_page", game_id=game_id)
+                )
             else:
                 create_game()
+                return redirect(url_for("game.games_page"))
 
-            return redirect('/')
+
         elif request.method == "POST" and request.form['_method'] == "DELETE":
             remove_game(game_id)
 
-            return redirect('/')
+            return redirect(url_for("game.games_page"))
 
-    return render_template('form.html', form=form, errors=errors)
+    return render_template('game_form.html', form=form, errors=errors)
 
 
 def update_game(game_id):
