@@ -1,6 +1,11 @@
 from flask import Blueprint, render_template
 
+<<<<<<< HEAD
 from models import User
+=======
+from db import db
+from models import User, Game
+>>>>>>> 7bee9ff3c9c5b97e42c24bfda9b1eb4309be9a4d
 
 test = Blueprint('test', __name__, template_folder='templates')
 
@@ -23,6 +28,10 @@ def home_page():
     user = User.query.filter_by(login="test").first()
     db.session.delete(user)
     db.session.commit()
+
+    # random active game
+    game = Game.get_random_active_game()
+    print(game)
     """
 
     return render_template("test.html")
