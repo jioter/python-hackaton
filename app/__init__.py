@@ -1,8 +1,8 @@
 from datetime import timedelta
 
-from auth import auth
-from game import game
-from app import app
+from app.auth import auth
+from app.game import game
+from app.app import app
 
 
 def run_app():
