@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from auth import auth
+from game import game
 from app import app
 
 
@@ -9,6 +10,7 @@ def run_app():
     app.permanent_session_lifetime = timedelta(minutes=20)  # add session expire time
 
     app.register_blueprint(auth)
+    app.register_blueprint(game)
 
     return app
 
