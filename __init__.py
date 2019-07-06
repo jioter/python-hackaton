@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from auth import auth
+from auth.routes import users
 # from game import game
 from test import test
 from app import app
@@ -13,7 +13,7 @@ def run_app():
         minutes=20)  # add session expire time
 
     app.register_blueprint(test)
-    app.register_blueprint(auth)
+    app.register_blueprint(users)
     # app.register_blueprint(auth)
     # app.register_blueprint(game)
 
