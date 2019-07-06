@@ -29,7 +29,7 @@ class Game(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = relationship('User', backref=backref('users', uselist=False))
+    user = relationship('User', backref=backref('games', uselist=False))
     number = db.Column(db.Integer, nullable=False)
     from_number = db.Column(db.Integer, nullable=False)
     to_number = db.Column(db.Integer, nullable=False)
@@ -49,9 +49,9 @@ class GameResult(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-    game = relationship('Game', backref=backref('games', uselist=False))
+    game = relationship('Game', backref=backref('game_results', uselist=False))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = relationship('User', backref=backref('users', uselist=False))
+    user = relationship('User', backref=backref('game_results', uselist=False))
     retries = db.Column(db.Integer, nullable=False)
     password = db.Column(db.String, nullable=True)
     status = db.Column(db.Integer, default=0)
