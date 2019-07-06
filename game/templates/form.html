@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+    <h1 class="my-5 py-5 text-center">{{ title }}</h1>
+
+    {% if errors %}
+        <div style="color: red">
+            {% for field, error_messages in errors.items() %}
+                <p>{{ field }}</p>
+                <ul>
+                    {% for error_message in error_messages %}
+                        <li>{{ error_message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {{ form.csrf_token }}
+        <input name="_method" type="hidden" value="POST">
+        <input name="user_id" type="hidden" value="1">
+        <div>
+            <div class="form-group">
+                <label for="number">Number</label>
+                <input id="number" name="number" type="text"
+                       class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="from_number">From number</label>
+                <input id="from_number" name="from_number" type="text"
+                       class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="to_number">To number</label>
+                <input id="to_number" name="to_number" type="text"
+                       class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="attempts">Attempts</label>
+                <input id="attempts" name="attempts" type="text"
+                       class="form-control">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Game</button>
+    </form>
+{% endblock %}
