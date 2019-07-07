@@ -7,7 +7,6 @@ from db import db
 
 game = Blueprint("game", __name__, template_folder='templates')
 
-
 @game.route("/", methods=["GET"])
 def games_page():
     content = Game.query.order_by(

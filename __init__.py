@@ -1,7 +1,8 @@
 from datetime import timedelta
 from flask_wtf.csrf import CSRFProtect
+from app import bcrypt, login_manager
 
-# from auth import auth
+from auth.routes import users
 from game import game
 from app import app
 from db import db
@@ -13,7 +14,7 @@ def run_app():
         minutes=20)  # add session expire time
 
     # app.register_blueprint(test)
-    # app.register_blueprint(auth)
+    app.register_blueprint(users)
     app.register_blueprint(game)
 
     CSRFProtect().init_app(app)
@@ -21,6 +22,9 @@ def run_app():
         SECRET_KEY="xFiewikvWEkyHeXQ3iY6",
         WTF_CSRF_SECRET_KEY="yvggjVvE4yyMWHu2SsSKVCNwF0cXipuZaWWOqLLE"
     ))
+
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
 
     return app
 

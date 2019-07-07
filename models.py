@@ -2,11 +2,17 @@ import datetime
 
 from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
+from flask_login import UserMixin
 
 from db import db
+from app import login_manager
 
 
-class User(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     ROLE_USER = 0
