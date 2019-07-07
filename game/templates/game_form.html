@@ -1,8 +1,6 @@
 {% extends "layout.html" %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
-    <h1 class="my-5 py-5 text-center">{{ title }}</h1>
-
     {% if errors %}
         <div style="color: red">
             {% for field, error_messages in errors.items() %}
@@ -25,7 +23,6 @@
                    value="{{ form.from_number.value }}">
             <input name="to_number" type="hidden" value="{{ form.to_number.value }}">
             <input name="attempts" type="hidden" value="{{ form.attempts.value }}">
-
             <button type="submit" class="btn btn-danger">Delete</button>
         </form>
     {% endif %}
@@ -58,6 +55,6 @@
                        class="form-control" value="{{ form.attempts.value }}">
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Save Game</button>
+        <button type="submit" class="btn btn-primary">{{ "Save" if form.id.value else "Create" }}</button>
     </form>
 {% endblock %}
